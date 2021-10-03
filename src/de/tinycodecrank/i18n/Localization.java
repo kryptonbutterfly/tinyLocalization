@@ -7,19 +7,20 @@ import java.util.function.Supplier;
 
 public final class Localization implements Supplier<String>, AutoCloseable
 {
-	private String key;
-	private Localizer localizer;
+	private String		key;
+	private Localizer	localizer;
 	
 	private HashSet<Consumer<String>> changeListener = new HashSet<>();
 	
 	Localization(String key, Localizer localizer, Consumer<String>[] listener)
 	{
-		this.key = key;
-		this.localizer = localizer;
+		this.key		= key;
+		this.localizer	= localizer;
 		Arrays.stream(listener)
 			.forEach(this::addApply);
 	}
 	
+	@Override
 	public String get()
 	{
 		return localizer.language.localize(key);
@@ -42,7 +43,7 @@ public final class Localization implements Supplier<String>, AutoCloseable
 		listener.accept(get());
 		return this;
 	}
-
+	
 	@Override
 	public void close()
 	{
