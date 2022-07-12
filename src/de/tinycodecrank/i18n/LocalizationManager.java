@@ -16,75 +16,88 @@ public final class LocalizationManager
 	
 	private final void translationListener(MissingLocalizationEvent event)
 	{
-		for(Consumer<MissingLocalizationEvent> l : missingTranslationListener)
+		for (Consumer<MissingLocalizationEvent> l : missingTranslationListener)
 		{
 			l.accept(event);
-			if(event.consumed())
+			if (event.consumed())
 			{
 				break;
 			}
 		}
 	}
 	
-	public final I18nStreamConfig config;
-	HashMap<String, Language> languages = new HashMap<>();
-	private Language defaultLanguage;
-	public boolean throwWhenMissing = false;
+	public final I18nStreamConfig	config;
+	HashMap<String, Language>		languages			= new HashMap<>();
+	private Language				defaultLanguage;
+	public boolean					throwWhenMissing	= false;
 	
-	public LocalizationManager(String configLocation, Consumer<MissingLocalizationEvent> listener) throws IOException
+	public LocalizationManager(
+		String configLocation,
+		ResourceLoader loader,
+		Consumer<MissingLocalizationEvent> listener)
+		throws IOException
 	{
-		this(configLocation);
+		this(configLocation, loader);
 		missingTranslationListener.addFirst(listener);
 	}
 	
-	public LocalizationManager(String configLocation) throws IOException
+	public LocalizationManager(String configLocation, ResourceLoader loader) throws IOException
 	{
 		missingTranslationListener.addFirst(this::defaultTranslationListener);
-		this.config = loadConfig(configLocation);
-		load();
+		this.config = loadConfig(configLocation, loader);
+		load(loader);
 	}
 	
-	public LocalizationManager(I18nStreamConfig config, Consumer<MissingLocalizationEvent> listener) throws IOException
+	public LocalizationManager(
+		I18nStreamConfig config,
+		ResourceLoader loader,
+		Consumer<MissingLocalizationEvent> listener)
+		throws IOException
 	{
-		this(config);
+		this(config, loader);
 		missingTranslationListener.addFirst(listener);
 	}
 	
-	public LocalizationManager(I18nStreamConfig config) throws IOException
+	public LocalizationManager(I18nStreamConfig config, ResourceLoader loader) throws IOException
 	{
 		missingTranslationListener.addFirst(this::defaultTranslationListener);
 		this.config = config;
-		load();
+		load(loader);
 	}
 	
-	private void load() throws IOException
+	private void load(ResourceLoader loader) throws IOException
 	{
-		File [] langFiles = getLocalizationsFromFolder();
-		if(langFiles != null)
+		File[] langFiles = getLocalizationsFromFolder();
+		if (langFiles != null)
 		{
-			for(File langFile : langFiles)
+			for (File langFile : langFiles)
 			{
-				try(FileInputStream iStream = new FileInputStream(langFile))
+				try (FileInputStream iStream = new FileInputStream(langFile))
 				{
-					if(iStream != null)
+					if (iStream != null)
 					{
-						String fileName = langFile.getName();
-						String langName = fileName.substring(0, fileName.length() - config.extension.length());
-						this.languages.put(langName, Language.loadFromStream(iStream, config.delimiter, langName, this::translationListener));
+						String	fileName	= langFile.getName();
+						String	langName	= fileName.substring(0, fileName.length() - config.extension.length());
+						this.languages.put(
+							langName,
+							Language.loadFromStream(iStream, config.delimiter, langName, this::translationListener));
 					}
 				}
 			}
 		}
-		for(String lang : config.languageLocations)
+		for (String lang : config.languageLocations)
 		{
-			try(InputStream iStream = LocalizationManager.class.getResourceAsStream(lang))
+			try (InputStream iStream = loader.load(lang))
 			{
-				if(iStream != null)
+				if (iStream != null)
 				{
-					String langName = lang.substring(lang.lastIndexOf("/") + 1, lang.length() - config.extension.length());
-					if(!this.languages.containsKey(langName))
+					String langName = lang
+						.substring(lang.lastIndexOf("/") + 1, lang.length() - config.extension.length());
+					if (!this.languages.containsKey(langName))
 					{
-						this.languages.put(langName, Language.loadFromStream(iStream, config.delimiter, langName, this::translationListener));
+						this.languages.put(
+							langName,
+							Language.loadFromStream(iStream, config.delimiter, langName, this::translationListener));
 					}
 				}
 			}
@@ -92,18 +105,23 @@ public final class LocalizationManager
 		this.defaultLanguage = this.languages.get(config.defaultLanguage);
 	}
 	
-	public static I18nStreamConfig loadConfig(String configLocation) throws IOException
+	public static I18nStreamConfig loadConfig(String configLocation, ResourceLoader loader)
+		throws IOException
 	{
 		I18nStreamConfig i18nConfig = new I18nStreamConfig();
-		loadConfig(i18nConfig, configLocation);
+		loadConfig(i18nConfig, configLocation, loader);
 		return i18nConfig;
 	}
 	
-	public static void loadConfig(I18nStreamConfig i18nConfig, String configLocation) throws IOException
+	public static void loadConfig(
+		I18nStreamConfig i18nConfig,
+		String configLocation,
+		ResourceLoader loader)
+		throws IOException
 	{
-		try (InputStream configStream = LocalizationManager.class.getResourceAsStream(configLocation))
+		try (InputStream configStream = loader.load(configLocation))
 		{
-			if(configStream != null)
+			if (configStream != null)
 			{
 				i18nConfig.load(configStream);
 			}
@@ -124,13 +142,12 @@ public final class LocalizationManager
 	
 	private File[] getLocalizationsFromFolder()
 	{
-		if(config.localizationFolder != null)
+		if (config.localizationFolder != null)
 		{
 			File languageFolder = new File(config.localizationFolder);
-			if(languageFolder.exists() && languageFolder.isDirectory())
+			if (languageFolder.exists() && languageFolder.isDirectory())
 			{
-				return languageFolder.listFiles((File dir, String name) ->
-					name.endsWith(config.extension));
+				return languageFolder.listFiles((File dir, String name) -> name.endsWith(config.extension));
 			}
 		}
 		return null;
@@ -138,8 +155,9 @@ public final class LocalizationManager
 	
 	public void defaultTranslationListener(MissingLocalizationEvent event)
 	{
-		final String message = String.format("No translation found for: \"%s\" in %s", event.identifier(), event.language());
-		if(throwWhenMissing)
+		final String message = String
+			.format("No translation found for: \"%s\" in %s", event.identifier(), event.language());
+		if (throwWhenMissing)
 		{
 			event.exception = new MissingTranslationException(message);
 		}
