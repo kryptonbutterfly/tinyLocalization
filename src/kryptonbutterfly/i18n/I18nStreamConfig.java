@@ -1,9 +1,9 @@
-package de.tinycodecrank.i18n;
+package kryptonbutterfly.i18n;
 
 import java.util.Locale;
 
-import de.tinycodecrank.xmlConfig4J.StreamConfig;
-import de.tinycodecrank.xmlConfig4J.annotations.Value;
+import kryptonbutterfly.xmlConfig4J.StreamConfig;
+import kryptonbutterfly.xmlConfig4J.annotations.Value;
 
 public final class I18nStreamConfig extends StreamConfig
 {

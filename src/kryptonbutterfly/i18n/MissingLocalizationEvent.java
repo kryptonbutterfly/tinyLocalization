@@ -1,4 +1,4 @@
-package de.tinycodecrank.i18n;
+package kryptonbutterfly.i18n;
 
 public final class MissingLocalizationEvent
 {

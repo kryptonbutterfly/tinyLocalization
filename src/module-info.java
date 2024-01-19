@@ -1,7 +1,7 @@
-module de.tinycodecrank.Localization
+module kryptonbutterfly.Localization
 {
-	exports de.tinycodecrank.i18n;
+	exports kryptonbutterfly.i18n;
 	
-	requires de.tinycodecrank.xmlConfig4J;
-	requires de.tinycodecrank.Functional;
+	requires kryptonbutterfly.xmlConfig4J;
+	requires kryptonbutterfly.Functional;
 }

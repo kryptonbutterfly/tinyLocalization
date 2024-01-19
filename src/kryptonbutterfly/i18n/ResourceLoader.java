@@ -1,10 +1,10 @@
-package de.tinycodecrank.i18n;
+package kryptonbutterfly.i18n;
 
 import java.io.InputStream;
 import java.util.function.Supplier;
 
-import de.tinycodecrank.functions.applicable.ApplicableLeft;
-import de.tinycodecrank.functions.applicable.ApplicableRight;
+import kryptonbutterfly.functions.applicable.ApplicableLeft;
+import kryptonbutterfly.functions.applicable.ApplicableRight;
 
 @FunctionalInterface
 public interface ResourceLoader extends ApplicableLeft<String, Supplier<InputStream>>, ApplicableRight<String, Supplier<InputStream>>

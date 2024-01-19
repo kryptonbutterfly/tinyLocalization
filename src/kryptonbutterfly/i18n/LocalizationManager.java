@@ -1,4 +1,4 @@
-package de.tinycodecrank.i18n;
+package kryptonbutterfly.i18n;
 
 import java.io.File;
 import java.io.FileInputStream;
