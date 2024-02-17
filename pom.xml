@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>kryptonbutterfly</groupId>
 	<artifactId>localization</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<name>Localization</name>
 
 	<distributionManagement>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>kryptonbutterfly</groupId>
 			<artifactId>xml_config_4j</artifactId>
-			<version>3.0.0</version>
+			<version>3.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>kryptonbutterfly</groupId>
